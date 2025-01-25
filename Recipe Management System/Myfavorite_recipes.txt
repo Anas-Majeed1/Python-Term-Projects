@@ -1,0 +1,11 @@
+Recipe: Chicken Curry
+Category: Lunch
+Cooking Time: 40 minutes
+Ingredients:
+  - chicken
+  - spices
+  - yogurt
+Steps:
+  - Marinate chicken
+  - Cook with spices
+

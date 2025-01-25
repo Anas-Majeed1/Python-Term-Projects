@@ -1,0 +1,129 @@
+#developer names (AWAIS AMJAD , Faizan Ali goraya & Naoman) 
+import tkinter as tk
+from tkinter import messagebox
+import numpy as np
+
+# There is two players in match. players (Human and AI)
+HUMAN = -1
+AI = 1
+EMPTY = 0
+
+class TicTacToeGUI:
+    def __init__(self):
+        self.board = np.zeros((3, 3), dtype=int)
+        self.window = tk.Tk()
+        self.window.title("Tic-Tac-Toe: AI vs Human")
+        self.buttons = [[None for _ in range(3)] for _ in range(3)]
+        self.create_board()
+        self.current_player = HUMAN
+
+    def create_board(self):
+        for i in range(3):
+            for j in range(3):
+                self.buttons[i][j] = tk.Button(self.window, text=" ", font=("Arial", 24), width=5, height=2,
+                                               command=lambda x=i, y=j: self.human_move(x, y))
+                self.buttons[i][j].grid(row=i, column=j)
+
+    def human_move(self, x, y):
+        if self.board[x, y] == EMPTY and self.current_player == HUMAN:
+            self.board[x, y] = HUMAN
+            self.buttons[x][y].config(text="X", state=tk.DISABLED)
+            if self.check_winner() == HUMAN:
+                messagebox.showinfo("Game Over", "Congratulations! You win the Match !")
+                self.reset_game()
+            elif self.is_full():
+                messagebox.showinfo("Game Over", "It's a draw!")
+                self.reset_game()
+            else:
+                self.current_player = AI
+                self.ai_move()
+
+    def ai_move(self):
+        _, move = self.minmax(0, AI)
+        if move:
+            x, y = move
+            self.board[x, y] = AI
+            self.buttons[x][y].config(text="O", state=tk.DISABLED)
+            if self.check_winner() == AI:
+                messagebox.showinfo("Game Over ...", "AI wins the Match!")
+                self.reset_game()
+            elif self.is_full():
+                messagebox.showinfo("Game Over....", "It's a draw :(...!")
+                self.reset_game()
+            self.current_player = HUMAN
+
+    def is_full(self):
+        return not (self.board == EMPTY).any()
+
+    def check_winner(self):
+        for i in range(3):
+
+            # Check rows and columns of puzzle box 
+            if abs(sum(self.board[i, :])) == 3:
+
+                return self.board[i, 0]
+            if abs(sum(self.board[:, i])) == 3:
+
+
+                return self.board[0, i]
+        # Check diagonals
+        if abs(sum([self.board[i, i] for i in range(3)])) == 3:
+            return self.board[0, 0]
+        if abs(sum([self.board[i, 2 - i] for i in range(3)])) == 3:
+            return self.board[0, 2]
+        return None
+
+    def get_empty_cells(self):
+        return [(i, j) for i in range(3) for j in range(3) if self.board[i, j] == EMPTY]
+
+    def minmax(self, depth, player, alpha=-np.inf, beta=np.inf):
+        winner = self.check_winner()
+        if winner == AI:
+            return 10 - depth, None
+        elif winner == HUMAN:
+            return depth - 10, None
+        elif self.is_full():
+            return 0, None
+
+        best_move = None
+        if player == AI:
+            max_eval = -np.inf
+            for (x, y) in self.get_empty_cells():
+                self.board[x, y] = AI
+                eval_score, _ = self.minmax(depth + 1, HUMAN, alpha, beta)
+                self.board[x, y] = EMPTY
+                if eval_score > max_eval:
+                    max_eval = eval_score
+                    best_move = (x, y)
+                alpha = max(alpha, eval_score)
+                if beta <= alpha:
+                    break
+            return max_eval, best_move
+        else:
+            min_eval = np.inf
+            for (x, y) in self.get_empty_cells():
+                self.board[x, y] = HUMAN
+                eval_score, _ = self.minmax(depth + 1, AI, alpha, beta)
+                self.board[x, y] = EMPTY
+                if eval_score < min_eval:
+                   min_eval = eval_score
+                   best_move = (x, y)
+                beta = min(beta, eval_score) 
+ if beta <= alpha:
+                   break
+            return min_eval, best_move
+
+    def reset_game(self):
+        self.board = np.zeros((3, 3), dtype=int)
+        for i in range(3):
+            for j in range(3):
+                self.buttons[i][j].config(text=" ", state=tk.NORMAL)
+        self.current_player = HUMAN
+
+    def run(self):
+        self.window.mainloop()
+
+# Run the GUI Tic-Tac-Toe (developer Mr.HACKER) ENDED
+if __name__ == "__main__":
+    game = TicTacToeGUI()
+    game.run()

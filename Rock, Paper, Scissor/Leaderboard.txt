@@ -1,0 +1,12 @@
+momna,7,8
+amber,0,4
+durre,3,1
+rumesah,2,1
+rabia,0,0
+ruhma,1,0
+hira,1,2
+maryam,0,1
+amara,3,0
+aymen,0,0
+iqra,0,1
+safoora,0,1
